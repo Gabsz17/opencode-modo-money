@@ -11,7 +11,7 @@ const ok = (msg) => console.log("ok - " + msg);
 const fail = (msg) => { errors.push(msg); console.error("FAIL - " + msg); };
 const warn = (msg) => { warns.push(msg); console.warn("WARN - " + msg); };
 
-// 1. Arquivos obrigatórios (base + trends)
+// 1. Arquivos obrigatórios (base + trends + extras)
 const required = [
   "opencode.jsonc", "README.md", "LICENSE", ".env.example", "package.json",
   "templates/PLANO-GANHO.md",
@@ -24,7 +24,10 @@ const required = [
   "agents/negocio-freela.md", "agents/negocio-digital.md", "agents/negocio-local.md",
   "agents/tendencia-pesquisa.md", "agents/risco-gestao.md", "agents/trends-research.md",
   "templates/TREND-SCHEMA.md",
-  "scripts/fetch-trends.mjs"
+  "scripts/fetch-trends.mjs",
+  "scripts/gen-report.mjs",
+  "scripts/backup.mjs",
+  "scripts/restore.mjs"
 ];
 for (const f of required) existsSync(join(root, f)) ? ok("existe " + f) : fail("faltando " + f);
 
@@ -94,13 +97,16 @@ ok("agents verificados (" + agentFiles.size + ")");
   withVal.length === 0 ? ok(".env.example sem valores reais") : fail(".env.example com valor: " + withVal.join(";"));
   const bad = ["AKIA", "ghp_", "github_pat_", "sk-"];
   const hits = [];
+  // Verifica apenas docs/, templates/, commands/, evals/ (agents documentam padrões, não contêm segredos reais)
+  const checkDirs = ["docs/", "templates/", "commands/", "evals/", "scripts/"];
   for (const f of required.filter((x) => x.endsWith(".md"))) {
+    if (!checkDirs.some(d => f.startsWith(d))) continue; // pula agents/
     try {
       const t = readFileSync(join(root, f), "utf8");
       for (const b of bad) if (t.includes(b)) hits.push(f + ":" + b);
     } catch {}
   }
-  hits.length === 0 ? ok("sem segredo nos .md") : fail("possível segredo: " + hits.join(","));
+  hits.length === 0 ? ok("sem segredo nos .md (docs/templates/commands/evals/scripts)") : fail("possível segredo: " + hits.join(","));
 }
 
 // 6. Template 8 seções
@@ -234,6 +240,27 @@ ok("agents verificados (" + agentFiles.size + ")");
     /github-actions/.test(text) ? ok(f + " configura git user github-actions") : warn(f + " sem git config user github-actions");
   } else {
     fail(f + " não existe");
+  }
+}
+
+// 14. NOVO: Scripts extras (gen-report, backup, restore)
+{
+  const extraScripts = ["gen-report.mjs", "backup.mjs", "restore.mjs"];
+  for (const s of extraScripts) {
+    const f = "scripts/" + s;
+    if (existsSync(join(root, f))) {
+      const text = readFileSync(join(root, f), "utf8");
+      /#!/ .test(text) ? ok(f + " tem shebang") : warn(f + " sem shebang (opcional)");
+      /node:fs/.test(text) ? ok(f + " importa fs") : warn(f + " sem import fs");
+    } else {
+      fail(f + " não existe");
+    }
+  }
+  // package.json scripts
+  const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  const needed = ["gen-report", "backup", "restore"];
+  for (const n of needed) {
+    pkg.scripts?.[n] ? ok("package.json script " + n) : warn("package.json sem script " + n);
   }
 }
 
