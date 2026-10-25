@@ -1,0 +1,18 @@
+{
+  // Config base do modo moneymaker. Agents em `agents/*.md` sao descobertos automaticamente.
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "moneymaker",
+  "permission": {
+    "external_directory": "deny",
+    "bash": {
+      "git push --force*": "deny",
+      "git push * --force*": "deny",
+      "git push * -f*": "deny",
+      "git push * --delete*": "deny",
+      "rm -rf*": "deny"
+    }
+  },
+  "mcp": {
+    "servers": {}
+  }
+}

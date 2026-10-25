@@ -1,0 +1,5 @@
+.env
+node_modules/
+.opencode/memory/inbox/*
+!.opencode/memory/inbox/.gitkeep
+evidencias/

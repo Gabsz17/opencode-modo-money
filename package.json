@@ -1,0 +1,16 @@
+{
+  "name": "@gabsz17/opencode-modo-money",
+  "version": "1.0.0",
+  "description": "Modo moneymaker para OpenCode: moneymaker + 3 coords + 8 workers + comandos /ganhar",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "files": ["agents/", "templates/", "commands/", "docs/", "scripts/", "evals/", "opencode.jsonc", "README.md", "LICENSE"],
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "dev": "node scripts/validate.mjs --help",
+    "test": "node --test"
+  },
+  "dependencies": {}
+}
