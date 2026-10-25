@@ -14,5 +14,9 @@
   },
   "mcp": {
     "servers": {}
+    // Opcao A mantida (sem trigger global).
+    // Se trends-research precisar browser para TikTok/Meta scraping:
+    // adicione "trends-browser": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-browser"] }
+    // ou configure seu server stdio customizado. Opcional — so se scraping publico nao bastar.
   }
 }

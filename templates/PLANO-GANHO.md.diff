@@ -1,0 +1,73 @@
+--- a/templates/PLANO-GANHO.md
++++ b/templates/PLANO-GANHO.md
+@@ -57,6 +57,45 @@
+ - Revisão mensal (o que funcionou/não + ajuste SMART):
+ 
+ ## 8. Disclaimer
+ 
+ - Este material é educacional e não constitui recomendação de investimento, promessa de lucro ou garantia de resultado. Decisões são do usuário, por sua conta e risco.
+ - Fontes oficiais prevalecem: BCB, CVM, B3, Tesouro Direto, gov.br/SEBRAE. Docs de corretora/exchange só como referência operacional.
+ - Sem segredo no repo: chaves só via env (`{env:NOME}`), `.env` fora do git. Dados sensíveis (CPF, saldo exato, chave real) nunca entram.
+ - Dúvida regulatória/tributária → contador/planejador certificado + fonte oficial, marcado `não confirmado` até lá.
++
++## 9. Trends e oportunidades do momento
++
++> Seção alimentada pelo agente `trends-research` (via `coord-mercado`). Cache JSON TTL 24h em `docs/dinheiro/trends-cache/YYYY-MM-DD.json`. Score 0-100 só educacional.
++
++### 9.1 Matriz de trends atuais
++
++| Data | Trend (fonte) | Volume | Crescimento % | Persistência (dias) | Score | Saturação | Eleitoral | Ação sugerida |
++|------|---------------|--------|---------------|---------------------|-------|-----------|-----------|---------------|
++| 2026-10-25 | Ex: #voto2026 (TSE) | 125.000 | +45% | 14 | 72 | baixa | sim | Conteúdo educativo cívico |
++| 2026-10-25 | Ex: receita airfryer (TikTok) | 890.000 | +12% | 7 | 58 | média | não | Produto digital receitas |
++
++### 9.2 Cache de trends (JSON diário)
++
++Arquivo: `docs/dinheiro/trends-cache/YYYY-MM-DD.json`
++```json
++{
++  "data_coleta": "2026-10-25",
++  "ttl_horas": 24,
++  "trends": [
++    {
++      "fonte": "tiktok",
++      "termo": "exemplo",
++      "volume": 100000,
++      "crescimento_pct": 25.5,
++      "persistencia_dias": 5,
++      "score": 65,
++      "saturacao": "media",
++      "eleitoral": false
++    }
++  ],
++  "alertas_saturacao": [
++    { "nicho": "dropshipping", "count_7dias": 67, "nivel": "alta", "recomendacao": "pivotar para nicho adjacente" }
++  ]
++}
++```
++
++### 9.3 Cálculo do score de oportunidade (0-100, educacional)
++
++```
++score = (viabilidade * demanda * margem) / (risco * saturação) * 100
++- viabilidade: 0-1 (facilidade execução, capital/tempo disponível)
++- demanda: 0-1 (trend_volume normalizado + crescimento + persistência)
++- margem: 0-1 (retorno_estimado_faixa vs custo_estimado_faixa)
++- risco: 1-3 (baixo=1, medio=2, alto=3)
++- saturação: 1-3 (baixa=1, media=2, alta=3)
++```
++Regras: score=0 se `trend_volume=0` OU `trend_persistencia_dias<3`. Eleitoral → `base_legal` obrigatória + `revisao-segura`.
++
++### 9.4 Alerta de saturação
++
++- **Alta** (>50 oportunidades mesmo nicho nos últimos 7 dias no cache): recomenda pivotar nicho ou aguardar.
++- **Média** (10-50): monitorar, diversificar ângulo.
++- **Baixa** (<10): janela de oportunidade, validar com 2ª fonte.
++
++### 9.5 Rotina diária de trends (integra `/ganhar-diario`)
++
++1. `trends-research` roda coleta (TikTok + Google Trends + TSE/YouTube/Meta) → atualiza cache JSON.
++2. Gera/atualiza matriz 9.1 no `PLANO-GANHO.md` do objetivo ativo.
++3. `/ganhar-diario` lê topo da matriz → 1 trend + 1 ação + risco do dia (com data+fonte).
++4. `coord-risco` valida saturação + risco eleitoral antes de liberar.
++5. Registra em `diario.md`: trend, score, ação executada, fonte, próximo passo.

@@ -63,3 +63,26 @@
 - Fontes oficiais prevalecem: BCB, CVM, B3, Tesouro Direto, gov.br/SEBRAE. Docs de corretora/exchange só como referência operacional.
 - Sem segredo no repo: chaves só via env (`{env:NOME}`), `.env` fora do git. Dados sensíveis (CPF, saldo exato, chave real) nunca entram.
 - Dúvida regulatória/tributária → contador/planejador certificado + fonte oficial, marcado `não confirmado` até lá.
+
+## 9. Trends e oportunidades do momento
+
+> Cache JSON 24h em `docs/dinheiro/trends-cache/YYYY-MM-DD.json`. Score 0-100 educacional (volume * 0.4 + velocidade * 0.3 + aderencia * 0.3). Saturacao: alta|media|baixa. Fonte + data obrigatorios. Sem fonte = `nao confirmado`.
+
+### 9.1 Matriz trends do dia
+
+| Rank | Topico | Fonte | Volume 24h | Score | Saturacao | Aderencia | Status |
+|------|--------|-------|------------|-------|-----------|-----------|--------|
+| 1 | ... | ... | ... | ... | alta\|media\|baixa | alta\|media\|baixa | validar\|nao confirmado |
+
+### 9.2 Rotina diaria trends
+
+- `/ganhar-trends <objetivo> [fonte]` → atualiza `trends.md` + `progresso.md` + `oportunidades.md`
+- Acao trends do dia: 1 opportunity `TrendOportunidade` validada + criterio de parada
+- Risco trends: saturacao + viés de recencia + mudanca rapida de algoritmo
+- Alerta saturacao: se score > 70 E saturacao = alta → aguardar ou diferenciar nicho
+
+### 9.3 Integracao com trilhas
+
+- Trends -> mercado: setor quente = setor para alocar (ex: IA -> tech, educacao -> edtech)
+- Trends -> negocios: nicho trends = produto/servico a testar (ex: Micro-SaaS -> template Notion)
+- Trends -> risco: saturacao alta = reduzir exposicao / diversificar
